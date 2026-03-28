@@ -8,7 +8,7 @@ jobs:
   promote:
     if: github.event.label.name == 'approved'
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Test step
         run: echo "Approved triggered"
