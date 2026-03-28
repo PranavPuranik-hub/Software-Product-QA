@@ -1,4 +1,4 @@
-name:Promote to Final Repo
+name: Promote to Final Repo
 
 on:
   pull_request:
@@ -11,4 +11,4 @@ jobs:
     
     steps:
       - name: Test step
-        run:echo "Approved triggered"
+        run: echo "Approved triggered"
