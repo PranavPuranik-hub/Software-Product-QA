@@ -48,6 +48,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
+          path: final-Software-Product
           branch: auto-update-${{ github.run_id }}
           base: main
           title: "Auto PR from duplicate repo"
