@@ -27,11 +27,7 @@ jobs:
           cd final-Software-Product
           git remote set-url origin https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
 
-      - name: Create new branch
-        run: |
-          cd final-Software-Product
-          git checkout -b auto-update-${{ github.run_id }}
-
+    
       - name: Copy folder
         run: |
           mkdir -p final-Software-Product/folderF1
