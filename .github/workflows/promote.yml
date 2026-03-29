@@ -13,21 +13,18 @@ jobs:
       - name: Checkout Software-Product-QA
         uses: actions/checkout@v3
 
+      - name: Checkout final-Software-Product
+        uses: actions/checkout@v3
+        with:
+          repository: PranavPuranik-hub/final-Software-Product
+          token: ${{ secrets.FINAL_REPO_TOKEN }}
+          path: final-Software-Product   # cloned into a subdirectory
+
       - name: Setup Git
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-      - name: Clone main repo
-        run: |
-          git clone https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
-        
-      - name: Set remote with token
-        run: |
-          cd final-Software-Product
-          git remote set-url origin https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
-
-    
       - name: Copy folder
         run: |
           mkdir -p final-Software-Product/folderF1
@@ -37,15 +34,13 @@ jobs:
         run: |
           echo "Run ${{ github.run_id }}" >> final-Software-Product/folderF1/auto-log.txt
 
-      - name: Create PR
+      - name: Create PR in final repo
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
-          path: final-Software-Product
+          path: final-Software-Product        # ✅ tells the action to treat this as the git root
           branch: auto-update-${{ github.run_id }}
           base: main
-          add-paths: |
-            folderF1/**
           commit-message: "Auto update from duplicate repo"
           title: "Auto PR from duplicate repo"
           body: "Created automatically after approval"
