@@ -37,13 +37,6 @@ jobs:
           mkdir -p final-Software-Product/folderF1
           cp -r folderF1/* final-Software-Product/folderF1/
 
-      - name: Commit and push
-        run: |
-          cd final-Software-Product
-          git add .
-          git commit -m "Auto update from duplicate repo"
-          git push origin HEAD
-
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
@@ -51,5 +44,6 @@ jobs:
           path: final-Software-Product
           branch: auto-update-${{ github.run_id }}
           base: main
+          commit-message: "Auto update from duplicate repo"
           title: "Auto PR from duplicate repo"
           body: "Created automatically after approval"
