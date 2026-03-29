@@ -21,6 +21,11 @@ jobs:
       - name: Clone main repo
         run: |
           git clone https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
+        
+      - name: Set remote with token
+        run: |
+          cd final-Software-Product
+          git remote set-url origin https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
 
       - name: Create new branch
         run: |
@@ -37,7 +42,7 @@ jobs:
           cd final-Software-Product
           git add .
           git commit -m "Auto update from duplicate repo"
-          git push https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git HEAD
+          git push origin HEAD
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
