@@ -10,35 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout duplicate repo
       - name: Checkout Software-Product-QA
         uses: actions/checkout@v3
 
-      # 2. Setup Git
       - name: Setup Git
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-      # 3. Clone main repo
       - name: Clone main repo
         run: |
           git clone https://x-access-token:${{ secrets.FINAL_REPO_TOKEN }}@github.com/PranavPuranik-hub/final-Software-Product.git
 
-      # 4. Create new branch in main repo
       - name: Create new branch
         run: |
           cd final-Software-Product
           git checkout -b auto-update-${{ github.run_id }}
 
-      # 5. Copy your folder
       - name: Copy folder
         run: |
-         mkdir -p final-Software-Product/folderF1
-         cp -r folderF1/* final-Software-Product/folderF1/
+          mkdir -p final-Software-Product/folderF1
+          cp -r folderF1/* final-Software-Product/folderF1/
 
-
-      # 6. Commit and push
       - name: Commit and push
         run: |
           cd final-Software-Product
@@ -46,11 +39,11 @@ jobs:
           git commit -m "Auto update from duplicate repo"
           git push origin HEAD
 
-      # 7. Create Pull Request
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
           branch: auto-update-${{ github.run_id }}
+          base: main
           title: "Auto PR from duplicate repo"
           body: "Created automatically after approval"
