@@ -31,7 +31,7 @@ jobs:
       - name: Copy folder
         run: |
           mkdir -p final-Software-Product/folderF1
-          cp -r folderF1/* final-Software-Product/folderF1/
+          cp -r folderF1/. final-Software-Product/folderF1/
 
       - name: Force change
         run: |
@@ -44,6 +44,8 @@ jobs:
           path: final-Software-Product
           branch: auto-update-${{ github.run_id }}
           base: main
+          add-paths: |
+            folderF1/**
           commit-message: "Auto update from duplicate repo"
           title: "Auto PR from duplicate repo"
           body: "Created automatically after approval"
