@@ -33,6 +33,10 @@ jobs:
           mkdir -p final-Software-Product/folderF1
           cp -r folderF1/* final-Software-Product/folderF1/
 
+      - name: Force change
+        run: |
+          echo "Run ${{ github.run_id }}" >> final-Software-Product/folderF1/auto-log.txt
+
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
