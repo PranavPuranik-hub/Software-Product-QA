@@ -57,6 +57,6 @@ jobs:
           base: ${{ steps.detect.outputs.branch }}
           add-paths: |
             .
-          commit-message: "Auto update from duplicate repo"
-          title: "Auto PR from duplicate repo"
+          commit-message: "Auto update from QA repo"
+          title: "Auto PR from QA repo"
           body: "Created automatically after approval"
