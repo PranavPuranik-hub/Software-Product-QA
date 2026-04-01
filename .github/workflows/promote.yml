@@ -1,18 +1,25 @@
 name: Promote to Final Repo v2
 
 on:
-  workflow_dispatch:   # ✅ BUTTON TRIGGER
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Branch to promote"
+        required: true
+        default: "test-branch"
 
 jobs:
   promote:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout duplicate repo
-      - name: Checkout Software-Product-QA
+      # 1. Checkout the selected branch (IMPORTANT CHANGE)
+      - name: Checkout source branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.source_branch }}
 
-      # 2. Checkout main repo
+      # 2. Checkout final repo
       - name: Checkout final-Software-Product
         uses: actions/checkout@v3
         with:
@@ -55,6 +62,6 @@ jobs:
           base: ${{ steps.detect.outputs.branch }}
           add-paths: |
             .
-          commit-message: "Auto update from duplicate repo"
-          title: "Auto PR from duplicate repo"
+          commit-message: "Auto update from ${{ github.event.inputs.source_branch }}"
+          title: "Auto PR from ${{ github.event.inputs.source_branch }}"
           body: "Created manually via button"
