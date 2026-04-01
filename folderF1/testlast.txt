@@ -1,6 +1,10 @@
 this is last test
 this is day 2 of testing
 this is the day 3 of testing.
+<<<<<<< HEAD
 this is the 
 this is the
 this is super man.
+=======
+this is the day
+
