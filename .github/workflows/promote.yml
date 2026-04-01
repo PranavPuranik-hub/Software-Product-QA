@@ -1,20 +1,25 @@
-name: Promote to Final Repo
+name: Promote to Final Repo v2
 
 on:
-  pull_request:
-    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Branch to promote"
+        required: true
+        default: "test-branch"
 
 jobs:
   promote:
-    if: github.event.label.name == 'approved'
     runs-on: ubuntu-latest
 
     steps:
-      
-      - name: Checkout Software-Product-QA
+      # 1. Checkout the selected branch (IMPORTANT CHANGE)
+      - name: Checkout source branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.source_branch }}
 
-     
+      # 2. Checkout final repo
       - name: Checkout final-Software-Product
         uses: actions/checkout@v3
         with:
@@ -22,24 +27,24 @@ jobs:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
           path: final-Software-Product
 
-     
+      # 3. Setup Git
       - name: Setup Git
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-      
+      # 4. Copy folder
       - name: Copy folder
         run: |
           mkdir -p final-Software-Product/folderF1
           cp -r folderF1/. final-Software-Product/folderF1/
 
-      
+      # 5. Force change
       - name: Force change
         run: |
           echo "Run ${{ github.run_id }}" >> final-Software-Product/folderF1/auto-log.txt
 
-      
+      # 6. Detect default branch
       - name: Detect default branch
         id: detect
         run: |
@@ -47,7 +52,7 @@ jobs:
           DEFAULT=$(git remote show origin | grep "HEAD branch" | awk '{print $NF}')
           echo "branch=$DEFAULT" >> $GITHUB_OUTPUT
 
-     
+      # 7. Create PR
       - name: Create PR in final repo
         uses: peter-evans/create-pull-request@v5
         with:
@@ -57,6 +62,6 @@ jobs:
           base: ${{ steps.detect.outputs.branch }}
           add-paths: |
             .
-          commit-message: "Auto update from QA repo"
-          title: "Auto PR from QA repo"
-          body: "Created automatically after approval"
+          commit-message: "Auto update from ${{ github.event.inputs.source_branch }}"
+          title: "Auto PR from ${{ github.event.inputs.source_branch }}"
+          body: "Created manually via button"
