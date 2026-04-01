@@ -80,5 +80,8 @@ jobs:
             Source Branch: ${{ github.event.inputs.source_branch }}
             PR Branch: auto-update-${{ github.run_id }}
 
+            👉 View PR:
+            ${{ steps.create_pr.outputs.pull-request-url }}
+
           to: pranavm.24.beis@acharya.ac.in
           from: ${{ secrets.EMAIL_USERNAME }}
