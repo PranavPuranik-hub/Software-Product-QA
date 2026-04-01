@@ -54,6 +54,7 @@ jobs:
 
       # 7. Create PR
       - name: Create PR in final repo
+        id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
@@ -73,7 +74,7 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "🚀 New PR Created"
+          subject: " New PR Created"
           body: |
             A new PR has been created.
 
