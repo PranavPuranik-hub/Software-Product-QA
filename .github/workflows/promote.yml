@@ -1,4 +1,4 @@
-name: Promote to Final Repo
+name: Promote to Final Repo v2
 
 on:
   workflow_dispatch:   # ✅ BUTTON TRIGGER
