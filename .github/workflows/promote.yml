@@ -6,7 +6,7 @@ on:
       source_branch:
         description: "Branch to promote"
         required: true
-        default: "test-branch"
+        default: "test-branch2"
 
 jobs:
   promote:
