@@ -65,3 +65,20 @@ jobs:
           commit-message: "Auto update from ${{ github.event.inputs.source_branch }}"
           title: "Auto PR from ${{ github.event.inputs.source_branch }}"
           body: "Created manually via button"
+
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "🚀 New PR Created"
+          body: |
+            A new PR has been created.
+
+            Source Branch: ${{ github.event.inputs.source_branch }}
+            PR Branch: auto-update-${{ github.run_id }}
+
+          to: pranavm.24.beis@acharya.ac.in
+          from: ${{ secrets.EMAIL_USERNAME }}
