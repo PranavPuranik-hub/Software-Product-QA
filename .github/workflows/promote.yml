@@ -1,29 +1,31 @@
-name: Promote QA Main to Final Repo
+name: Promote to Final Repo v2
 
 on:
   workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Branch to promote"
+        required: true
+        default: "main"
 
 jobs:
   promote:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout QA repo MAIN branch (IMPORTANT CHANGE)
-      - name: Checkout QA repo main
+      # 1. Checkout the selected branch (IMPORTANT CHANGE)
+      - name: Checkout source branch
         uses: actions/checkout@v3
         with:
-          repository: PranavPuranik-hub/QA-Software-Product   # ✅ your QA repo
-          token: ${{ secrets.QA_REPO_TOKEN }}
-          ref: main
-          path: qa-repo
+          ref: ${{ github.event.inputs.source_branch }}
 
       # 2. Checkout final repo
-      - name: Checkout final repo
+      - name: Checkout final-Software-Product
         uses: actions/checkout@v3
         with:
           repository: PranavPuranik-hub/final-Software-Product
           token: ${{ secrets.FINAL_REPO_TOKEN }}
-          path: final-repo
+          path: final-Software-Product
 
       # 3. Setup Git
       - name: Setup Git
@@ -31,31 +33,40 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
 
-      # 4. Copy ONLY tested code from QA main
+      # 4. Copy folder
       - name: Copy folder
         run: |
-          mkdir -p final-repo/folderF1
-          cp -r qa-repo/folderF1/. final-repo/folderF1/
+          mkdir -p final-Software-Product/folderF1
+          cp -r folderF1/. final-Software-Product/folderF1/
 
       # 5. Force change
       - name: Force change
         run: |
-          echo "QA main sync ${{ github.run_id }}" >> final-repo/folderF1/auto-log.txt
+          echo "Run ${{ github.run_id }}" >> final-Software-Product/folderF1/auto-log.txt
 
-      # 6. Create PR in final repo (always to main)
+      # 6. Detect default branch
+      - name: Detect default branch
+        id: detect
+        run: |
+          cd final-Software-Product
+          DEFAULT=$(git remote show origin | grep "HEAD branch" | awk '{print $NF}')
+          echo "branch=$DEFAULT" >> $GITHUB_OUTPUT
+
+      # 7. Create PR
       - name: Create PR in final repo
         id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
-          path: final-repo
-          branch: qa-to-final-${{ github.run_id }}
-          base: main
-          commit-message: "QA main → Final"
-          title: "PR: QA main to Final"
-          body: "Only tested code from QA main"
+          path: final-Software-Product
+          branch: auto-update-${{ github.run_id }}
+          base: ${{ steps.detect.outputs.branch }}
+          add-paths: |
+            .
+          commit-message: "Auto update from ${{ github.event.inputs.source_branch }}"
+          title: "Auto PR from ${{ github.event.inputs.source_branch }}"
+          body: "Created manually via button"
 
-      # 7. Send Email
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -63,14 +74,15 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "QA → Final PR Created"
+          subject: " New PR Created"
           body: |
-            QA main has been promoted to Final repo.
+            A new PR has been created.
 
-            PR Branch: qa-to-final-${{ github.run_id }}
+            Source Branch: ${{ github.event.inputs.source_branch }}
+            PR Branch: auto-update-${{ github.run_id }}
 
             👉 View PR:
             ${{ steps.create_pr.outputs.pull-request-url }}
 
-          to: pranavm.24.beis@acharya.ac.in
+          to: pranavm.24.beis@acharya.ac.in,
           from: ${{ secrets.EMAIL_USERNAME }}
