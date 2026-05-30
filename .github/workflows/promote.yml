@@ -8,6 +8,11 @@ on:
         required: true
         default: "main"
 
+      target_branch_name:
+        description: "Target branch in final repo (optional)"
+        required: false
+        default: "no-name"
+
 jobs:
   promote:
     runs-on: ubuntu-latest
@@ -51,15 +56,24 @@ jobs:
           cd final-Software-Product
           DEFAULT=$(git remote show origin | grep "HEAD branch" | awk '{print $NF}')
           echo "branch=$DEFAULT" >> $GITHUB_OUTPUT
-
-      # 7. Create PR
+      
+      #7.  Decide PR branch name
+      - name: Determine PR branch name
+        id: branch_name
+        run: |
+          if [ "${{ github.event.inputs.target_branch_name }}" = "no-name" ]; then
+            echo "branch=no-name-${{ github.run_id }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch=${{ github.event.inputs.target_branch_name }}" >> $GITHUB_OUTPUT
+          fi
+      # 8. Create PR
       - name: Create PR in final repo
         id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINAL_REPO_TOKEN }}
           path: final-Software-Product
-          branch: auto-update-${{ github.run_id }}
+          branch: ${{ steps.branch_name.outputs.branch }}
           base: ${{ steps.detect.outputs.branch }}
           add-paths: |
             .
@@ -74,14 +88,14 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: " New PR Created"
+          subject: "New PR Created"
           body: |
             A new PR has been created.
 
             Source Branch: ${{ github.event.inputs.source_branch }}
-            PR Branch: auto-update-${{ github.run_id }}
+            PR Branch: ${{ steps.branch_name.outputs.branch }}
 
-            👉 View PR:
+            View PR:
             ${{ steps.create_pr.outputs.pull-request-url }}
 
           to: pranavm.24.beis@acharya.ac.in,
